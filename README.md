@@ -1,4 +1,4 @@
 webchat
 =======
 
-chatting app based on browser.
+chat app based on browser.
