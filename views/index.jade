@@ -1,0 +1,11 @@
+extends layout
+
+block headcontent
+	script(src='/javascripts/socket-client.js')
+	script(src='javascripts/webrtc-client.js')
+block content
+    h1= title
+    p Welcome to #{title}
+    div
+        video#localCamera(autoplay, controls)
+        video#remoteCamera(autoplay, controls)
