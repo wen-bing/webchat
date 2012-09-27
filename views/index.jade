@@ -1,11 +1,34 @@
 extends layout
-
 block headcontent
-	script(src='/javascripts/socket-client.js')
-	script(src='javascripts/webrtc-client.js')
+    script(type="text/javascript", src="/javascripts/index.js")
+        
 block content
-    h1= title
-    p Welcome to #{title}
-    div
-        video#localCamera(autoplay, controls)
-        video#remoteCamera(autoplay, controls)
+    div.container
+        h1 WebChat
+        p1 Web chat is a web browser based chat app.
+        div.row
+            div.span6
+                video#selfView(autoplay, controls)
+            div.span6
+                video#remoteView(autoplay, controls)
+        div.row
+            br
+        div.row
+            div.span4
+                form#joinForm.well.form-search
+                    label Nick Name:
+                    |  
+                    input#nickName.input-medium(type="text")    
+                    |  
+                    input#joinButton.btn.btn-primary(type="Submit", value="Join")
+            div.span4
+                label Online Users:
+                ul.nav.nav-list
+                    li
+                        div TES1  
+                            a#call.btn.btn-small(href="javascript:;")
+                                i.icon-facetime-video
+                           
+                    li Test2
+
+

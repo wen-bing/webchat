@@ -1,8 +1,55 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+.videoContainer {
+    background-color: white;
+    min-height: 360px;
 }
 
-a {
-  color: #00B7FF;
+.nav {
+    margin: 0px;
+}
+.talkInputDiv {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+.talkInput {
+    width: 268px;
+}
+.talkContentDiv {
+    height: 222px;
+    overflow-y: auto;
+}
+.talkContent {
+    width: 276px;
+    padding-top: 10px;
+    word-wrap: break-word;
+    word-break: normal;
+}
+.talkContent ul li {
+    margin-bottom: 10px;
+    margin-left: 15px;
+    line-height: 20px;
+}
+.chatMsgSender {
+    color: #08c;
+    font-weight: bold;
+}
+.chatMsgTime {
+    margin-left: 10px;
+    color: #999;
+}
+
+.onlineUserListDiv {
+    min-height: 200px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.onlineUserListTitle {
+    font-size: 10.5pt;
+    font-weight: bold;
+    padding: 5px 10px 5px 10px;
+    background-color: #eee;
+    border-bottom: 1px solid #ddd;
+}
+.onlineUser li {
+    text-align: center;
 }

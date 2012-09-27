@@ -9,8 +9,8 @@ $(function(){
 
   var _localStream;
   //should not be a jquery object.
-  var _localVideo = $("#localCamera").get(0);
-  var _remoteVideo = $("#remoteCamera").get(0);
+  var _localVideo = $("#selfView").get(0);
+  var _remoteVideo = $("#remoteView").get(0);
 
   var onFailed = function(e){
     alert("Sorry cannot get your webcam & microphone");
