@@ -27,7 +27,11 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+var httpServer = http.createServer(app);
 
-http.createServer(app).listen(app.get('port'), function(){
+var socket_server = require('./socket-server');
+socket_server.startServer(httpServer);
+
+httpServer.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });

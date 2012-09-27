@@ -1,8 +1,9 @@
 extends layout
 block headcontent
-    script(type="text/javascript", src="/javascripts/index.js")
-        
-block content
+    script(src="/socket.io/socket.io.js")
+    script(type="text/javascript", src="/javascripts/socket-client.js")
+    script(type="text/javascript", src="/javascripts/jsep2.js")
+
     div.container
         h1 WebChat
         p1 Web chat is a web browser based chat app.
@@ -10,25 +11,31 @@ block content
             div.span6
                 video#selfView(autoplay, controls)
             div.span6
-                video#remoteView(autoplay, controls)
-        div.row
-            br
+                video#remoteView(autoplay,controls)
         div.row
             div.span4
-                form#joinForm.well.form-search
-                    label Nick Name:
-                    |  
-                    input#nickName.input-medium(type="text")    
-                    |  
-                    input#joinButton.btn.btn-primary(type="Submit", value="Join")
+                div.row
+                    div.span2
+                        label Nick Name:
+                        input#nickName.input-medium(type="text")    
+                        label Room Name:
+                        input#roomName.input-medium(type="text")
+                    div.span2
+                        br
+                        br
+                        br
+                        input#joinButton.btn.btn-large.btn-primary(type="button", value="Join")
             div.span4
                 label Online Users:
-                ul.nav.nav-list
+                ul#onlineUsersContainer.nav.nav-list
                     li
                         div TES1  
                             a#call.btn.btn-small(href="javascript:;")
                                 i.icon-facetime-video
                            
                     li Test2
+            dvi.span4
+                label Status
+                textarea#statusContainer.input-xlarge(rows="8", readonly="readonly")
 
 
