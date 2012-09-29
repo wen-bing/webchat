@@ -1,4 +1,5 @@
 var socket_io = require('socket.io');
+var util = require('util');
 
 module.exports.startServer = function(httpServer) {
 	var socketIO = socket_io.listen(httpServer);
@@ -35,8 +36,21 @@ module.exports.startServer = function(httpServer) {
 			socket.emit('online_users', {users:onlineUsers});
 		});
 
-		socket.on('message', function(msg) {
-			socket.broadcast.to(socket.room).emit('message', msg);
+		socket.on('start_call', function(msg) {
+			socket.broadcast.to(socket.room).emit('call_invitation', msg);
+		});
+
+		socket.on('invitation_answer', function(data){
+			socket.broadcast.to(socket.room).emit('invitation_answer', data);
+		});
+
+		socket.on('invitation_ack', function(data){
+			socket.broadcast.to(socket.room).emit('invitation_ack', data);
+		});
+
+		socket.on('signal_message', function(data){
+			console.log('SIGNAL received: ' + util.inspect(data));
+			socket.broadcast.to(socket.room).emit('signal_message', data);
 		});
 	});
 
