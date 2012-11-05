@@ -1,14 +1,26 @@
 doctype 5
 html(lang="en")
   head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    link(rel='stylesheet', href='/stylesheets/bootstrap.css')
-    link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.css')
-    script(type="text/javascript", src="/javascripts/jquery-1.8.2.min.js")
-    script(type="text/javascript", src="/javascripts/jquery-pubsub.js")
-    script(type="text/javascript", src="/javascripts/bootstrap.js")
-
+    title
+        block titleContent
+    link(rel='stylesheet', href='/css/style.css')
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
+    script(type="text/javascript", src="/js/jquery-1.8.2.min.js")
+    script(type="text/javascript", src="/js/jquery-pubsub.js")
+    script(type="text/javascript", src="/bootstrap/js/bootstrap.js")
     block headcontent
   body
-    block content
+    div.container
+        div.row
+            div.offset2.span8
+                ul.nav.nav-pills.pull-right
+                    li.active
+                        a(href="/") Home
+                    li
+                        a(href="/help") Help
+                    li
+                        a(href="/about") About
+                h3.muted Web Chat
+                hr
+    block bodycontent

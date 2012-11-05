@@ -27,6 +27,8 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.post('/demo', routes.joindemo);
+app.get('/demo', routes.demo);
 var httpServer = http.createServer(app);
 
 var socket_server = require('./socket-server');

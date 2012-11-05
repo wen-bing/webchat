@@ -6,82 +6,91 @@ module.exports.startServer = function(httpServer) {
 	var allOnlineUsers = {};
 
 	socketIO.on('connection', function(socket) {
-		socket.emit("ready");
-
-		socket.on('join_room', function(data) {
-			socket.room = data.roomName;
+		socket.on('msg_join_room', function(data) {
+			//TODO: check relogin for same user:
+			var roomName = data.roomName;
+			if(!roomName) roomName = "demoRoom";
+			socket.room = roomName;
 			socket.nickName = data.nickName;
-			socket.join(data.roomName);
-			storeOnlineUsers(socket);
-			socket.emit('joined');
-			socket.broadcast.to(socket.room).emit('online', data.nickName);
-		});
-
-		socket.on('leave_room', function(data) {
-			removeOnlineUser(socket);
-			socket.broadcast.to(socket.room).emit('offline', socket.nickName);
-			socket.leave(socket.room);
+			socket.supportVideo = data.supportVideo;
+			socket.join(roomName);
+			storeOnlineUser(socket);
+			socket.emit('msg_joined');
+			socket.broadcast.to(socket.room).emit('msg_user_online', {name: data.nickName, video: data.supportVideo});
 		});
 
 		socket.on('disconnect', function() {
-			if (socket.room && socket.nickName) {
+			var joinedSocket = getSocket(socket.room, socket.nickName);
+			if(joinedSocket){
+				socket.broadcast.to(socket.room).emit('msg_user_offline', socket.nickName);
 				removeOnlineUser(socket.room, socket.nickName);
-				socket.broadcast.to(socket.room).emit('offline', socket.nickName);
-				socket.leave(socket.room);
+			}
+		})
+
+		socket.on('msg_get_online_users', function() {
+			var onlineUsers = getOnlineUserByRoom(socket.room);
+			socket.emit('msg_get_online_users', {
+				users: onlineUsers
+			});
+		});
+
+		socket.on('msg_chat', function(chatMsg){
+			socket.broadcast.to(socket.room).emit('msg_chat', chatMsg);
+		})
+
+		//video call only support p2p
+		socket.on('msg_start_call', function(data) {
+			var remoteSocket = getSocket(socket.room, data.to);
+			if(remoteSocket){
+				remoteSocket.emit('msg_start_call', data)
 			}
 		});
 
-		socket.on('get_online_users', function() {
-			var onlineUsers = getOnlineUserByRoom(socket.room);
-			socket.emit('online_users', {users:onlineUsers});
+		socket.on('msg_call_answer', function(data) {
+			var remoteSocket = getSocket(socket.room, data.to);
+			if(remoteSocket){
+				remoteSocket.emit('msg_call_answer', data);
+			}
 		});
 
-		socket.on('start_call', function(msg) {
-			socket.broadcast.to(socket.room).emit('call_invitation', msg);
+		socket.on('msg_answer_ack', function(data) {
+			var remoteSocket = getSocket(socket.room, data.to);
+			if(remoteSocket){
+				remoteSocket.emit('msg_answer_ack', data)
+			}
 		});
 
-		socket.on('invitation_answer', function(data){
-			socket.broadcast.to(socket.room).emit('invitation_answer', data);
-		});
-
-		socket.on('invitation_ack', function(data){
-			socket.broadcast.to(socket.room).emit('invitation_ack', data);
-		});
-
-		socket.on('signal_message', function(data){
-			console.log('SIGNAL received: ' + util.inspect(data));
-			socket.broadcast.to(socket.room).emit('signal_message', data);
+		socket.on('msg_signal_msg', function(data) {
+			var remoteSocket = getSocket(socket.room, data.to);
+			if(remoteSocket){
+				remoteSocket.emit('msg_signal_msg', data);
+			}
 		});
 	});
 
-	function getOnlineUserByRoom(roomName) {
-		var roomOnlines = allOnlineUsers[roomName];
-		if (!roomOnlines) return [];
-		return roomOnlines;
+	function getSocket(roomName, nickName) {
+		if(allOnlineUsers[roomName])
+			return allOnlineUsers[roomName][nickName];
+		else return null;
 	}
 
-	function storeOnlineUsers(socket) {
-		var roomOnlines = allOnlineUsers[socket.room];
-		if (!roomOnlines) {
-			roomOnlines = [];
-			allOnlineUsers[socket.room] = roomOnlines;
+	function getOnlineUserByRoom(roomName) {
+		var users=[]
+		if(allOnlineUsers[roomName]){
+			for(var nick in allOnlineUsers[roomName]){
+				users.push({name: nick,
+					video: allOnlineUsers[roomName][nick].supportVideo});
+			}
 		}
-		var index = roomOnlines.indexOf(socket.nickName);
-		if (index > -1) {
-			return;
-		}
-		allOnlineUsers[socket.room].push(socket.nickName);
+		return users;
+	}
+
+	function storeOnlineUser(socket) {
+		if(!allOnlineUsers[socket.room]) allOnlineUsers[socket.room] = {};
+        allOnlineUsers[socket.room][socket.nickName] = socket;
 	}
 
 	function removeOnlineUser(roomName, nickName) {
-		var roomOnlines = allOnlineUsers[roomName];
-		if (!roomOnlines) {
-			return;
-		}
-		var index = roomOnlines.indexOf(nickName);
-		if (index > -1) {
-			return;
-		}
-		roomOnlines.splice(index, 1);
+		delete allOnlineUsers[roomName][nickName];
 	}
 }

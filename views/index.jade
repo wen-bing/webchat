@@ -1,41 +1,27 @@
-extends layout
+extend layout
+block titleContent
+    | Web Chat
 block headcontent
-    script(src="/socket.io/socket.io.js")
-    script(type="text/javascript", src="/javascripts/socket-client.js")
-    script(type="text/javascript", src="/javascripts/webrtc-client.js")
-
+    link(rel='stylesheet', href='/css/index.css')
+    script(type="text/javascript", src="/js/index.js")
+ 
+block bodycontent
     div.container
-        h1 WebChat
-        p1 Web chat is a web browser based chat app.
         div.row
-            div.span6
-                video#selfView(autoplay, controls)
-            div.span6
-                video#remoteView(autoplay,controls)
-        div.row
-            div.span4
-                div.row
-                    div.span2
-                        label Nick Name:
-                        input#nickName.input-medium(type="text")    
-                        label Room Name:
-                        input#roomName.input-medium(type="text")
-                    div.span2
-                        br
-                        br
-                        br
-                        input#joinButton.btn.btn-large.btn-primary(type="button", value="Join")
-            div.span4
-                label Online Users:
-                ul#onlineUsersContainer.nav.nav-list
-                    li
-                        div TES1  
-                            a#call.btn.btn-small(href="javascript:;")
-                                i.icon-facetime-video
-                           
-                    li Test2
-            dvi.span4
-                label Status
-                textarea#statusContainer.input-xlarge(rows="8", readonly="readonly")
-
-
+            div.offset2.span4.whatwediv
+                h1 Web Chat
+                p.lead Easiest way to chat 
+                p.lead Chat on browser
+                p.lead No need to install clients
+                p.lead No need to install plugins
+                p.lead Text, voice and video are supported
+            div.span4.logindiv
+                a.btn.btn-large.btn-success(href="javascript:;") Sign up with Google Account
+                hr.speratorhr
+                a.btn.btn-large.btn-success(href="javascript:;") Sign up with Sina Account
+                hr.speratorhr
+                div.demoContainer.form-inline
+                    input#nickName.input-small(type="text", placeholder="Nick Name") 
+                    a#startDemo.btn.demo-button(href="javascript:;") Go to Demo
+                div#nickNameWarning.offset-top.alert.alert-warning.div-alert.hide
+    

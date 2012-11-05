@@ -1,0 +1,48 @@
+extend layout
+block titleContent
+    | Demo Web Chat
+
+block headcontent
+    link(rel='stylesheet', href='/css/demo.css')
+    script(type="text/javascript", src="/socket.io/socket.io.js")
+    script(type="text/javascript", src="/js/socket-client.js")
+    script(type="text/javascript", src="/js/webrtc-client.js")
+
+block bodycontent
+    input#nickName(type="hidden", value="#{nickName}")
+    input#socketServer(type="hidden", value="#{socketServer}")
+    div.container
+        div.row
+            div.offset2.span6.chatContainer
+                div.textChatContainer
+                    label#textChatTitle.titleLabel
+                    div.textChatHistoryContainer
+                        ul#textChatHistory.textChatHistoryUL
+                    div.chatInputDiv
+                        input#chatInput.chatInput(type="text", placeholder="input message here")
+                hr.speratorhr
+                label#videoTitle
+                div.videoChatContainer
+                    video#remoteView.remoteView(autoplay)
+                    video#localView.localView(autoplay)
+            div.span2.onlineUserContainer
+                div.currentUserContainer
+                    label you're #{nickName}
+                div.onlineUserULContainer
+                    ul#onlineUserList.onlineUserUL
+
+    script(type="text/javascript", src="/js/demo.js")
+
+    div#tempate.hide
+        li#onlineUserItemTemplate
+            span.userName
+                a(href="javascript:;")
+            span.videoIcon
+                a.hide(href="javascript:;")
+                    i.icon-facetime-video
+        li#chatHistoryItemTemplate
+            span.msgSender
+            span.msgSendTime
+            div.msg
+        
+            
