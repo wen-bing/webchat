@@ -14,22 +14,31 @@ block bodycontent
     div.container
         div.row
             div.offset2.span6.chatContainer
-                div.textChatContainer
-                    label#textChatTitle.titleLabel
+                div#textChatDIV.textChatContainer.hide
+                    span
+                        label#textChatTitle.titleLabel
+                    span
+                        div.chatInputDiv
+                            input#chatInput.chatInput(type="text", placeholder="input message here") 
                     div.textChatHistoryContainer
                         ul#textChatHistory.textChatHistoryUL
-                    div.chatInputDiv
-                        input#chatInput.chatInput(type="text", placeholder="input message here")
-                hr.speratorhr
-                label#videoTitle
-                div.videoChatContainer
-                    video#remoteView.remoteView(autoplay)
-                    video#localView.localView(autoplay)
-            div.span2.onlineUserContainer
+
+                div#videoDIV.videoDIV.hide
+                    hr.speratorhr
+                    label#videoTitle
+                    div.videoChatContainer
+                        video#remoteView.remoteView(autoplay)
+                        video#localView.localView(autoplay)
+            div.span2
                 div.currentUserContainer
-                    label you're #{nickName}
-                div.onlineUserULContainer
-                    ul#onlineUserList.onlineUserUL
+                    label
+                        span="You're "
+                        span.currenUserName #{nickName}
+                div.onlineUserContainer
+                    div.onlineUserTitle
+                        label online friends in the room
+                    div.onlineUserULContainer
+                        ul#onlineUserList.onlineUserUL
 
     script(type="text/javascript", src="/js/demo.js")
 

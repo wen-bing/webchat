@@ -1,0 +1,21 @@
+extends layout
+block titleContent 
+    | help
+
+block bodycontent
+    div.container
+        div.row
+            div.offset2.span6
+                h2 Video Chat
+                div.content 
+                    p 聊3D可以在会议中支持一对一的视频/语音聊天。 由于浏览器的兼容性问题，目前只能在Google Chrome浏览器上（版本号>=23 Stable）提供支持。
+                    img(src="/img/help/chrome-version.png")
+                    br
+                    p 如果会议中参与者都是使用Google Chrome， 那么在参与者列表中，联系人前面会出现一个视频图标。点击视频图标可以和此联系人开始视频聊天。如下图所示：
+                    img(src="/img/help/user-video.png")
+                    br
+                    p 视频聊天中浏览器需要使用你的摄像头和麦克风，出于安全的考虑，浏览器会弹出如下窗口，请求你允许浏览器使用你的摄像头和麦克风。当浏览器在页面的最上面弹出这个安全授权请求时， 请点击Allow按钮。
+                    img(src="/img/help/allow-video.png")
+                    br
+                    p 浏览器得到你的授权后，就可以开始视频聊天的连接过程了。首先你的本地会出现如下的视频聊天窗口。
+                    p 远程用户同意你的视频连接请求后，他的浏览器也会要求对方授权浏览器使用摄像头和麦克风。当远程用户允许浏览器使用他的摄像头和麦克风之后，视频聊天就建立起来了。

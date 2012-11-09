@@ -1,6 +1,7 @@
 /*
  * GET home page.
  */
+var config = require('../config');
 
 exports.index = function(req, res) {
 	res.render('index');
@@ -11,6 +12,14 @@ exports.demo = function(req, res) {
 	console.log(nickName);
 	res.render('demo', {
 		nickName: nickName,
-		socketServer: "http://192.168.1.111:5000"
+		socketServer: config.socket_server
 	});
+}
+
+exports.help = function(req, res){
+	res.render('help');
+}
+
+exports.about = function(req, res){
+	res.render('about');
 }

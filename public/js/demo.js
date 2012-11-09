@@ -4,6 +4,7 @@ $(function(){
 	var _socketClient = new SocketClient(_socketServer);
 	var _webRtcClient = new WebRTCClient(_nickName, _socketClient.getSocket());
 
+	var _textChatDIV = $("#textChatDIV");
 	var _textChatContainer = $("#textChatContainer");
 	var _onlineUserList = $("#onlineUserList");
 	var _onlineUserItemTemplate = $("#onlineUserItemTemplate");
@@ -12,7 +13,7 @@ $(function(){
 	var _chatHistoryItemTemplate = $("#chatHistoryItemTemplate");
 	var _textChatHistory = $("#textChatHistory");
 	
-	var _videoChatContainer = $("#videoChatContainer");
+	var _videoChatContainer = $("#videoDIV");
 	var _videoTitle = $("#videoTitle");
 
 	$.subscribe('event_online', function(){
@@ -55,8 +56,8 @@ $(function(){
 	});
 
 	_onlineUserList.find('.userName').find('a').live("click", function() {
-		_textChatContainer.show();
-		_textChatContainer.removeClass('hide');
+    	_textChatDIV.show();
+    	_textChatDIV.removeClass('hide');
         var user = $(this).attr("id"); 
         _textChatTitle.html("Text chatting with: " + user);
     });
@@ -79,6 +80,9 @@ $(function(){
     });
 
     $.subscribe('event_chat_msg', function(event, chatMsg){
+    	_textChatDIV.show();
+    	_textChatDIV.removeClass('hide');
+    	
     	var html = _textChatTitle.html().trim();
     	if(html == ""){
     		_textChatTitle.html("Text chatting with: " + chatMsg.from);

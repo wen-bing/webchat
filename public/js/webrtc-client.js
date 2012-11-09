@@ -3,10 +3,11 @@ function WebRTCClient(currentUser, socket) {
   var _socket = socket;
 
   //video views
-  var _videoChatContainer = $("#videoChatContainer");
+  var _videoChatContainer = $("#videoDIV");
   var _localVideoView = $("#localView");
   var _remoteVideoView = $("#remoteView");
 
+  var mediaConstraints = {'has_audio':true, 'has_video':true};
   var _stun_server = 'STUN stun.l.google.com:19302';
   var _peerConnection = null;
   var _localStream;
@@ -55,6 +56,7 @@ function WebRTCClient(currentUser, socket) {
     if(result) {
       _caller = data.from;
       _callee = _currentUser;
+      showLocalVideoView();
       tryGetUserMedia();
     } else {
       _socket.emit('msg_call_answer', {
@@ -103,6 +105,7 @@ function WebRTCClient(currentUser, socket) {
 
   function showLocalVideoView() {
     _videoChatContainer.show();
+    _videoChatContainer.removeClass('hide');
   }
 
   function hideVideoViews() {
@@ -156,16 +159,14 @@ function WebRTCClient(currentUser, socket) {
 
   function tryCreatePeerConnection() {
     var connection;
+    var pc_config = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
     try {
-      connection = new webkitPeerConnection00(_stun_server, onICECandidate);
-    } catch(e) {
-      console.log("Failed to create webkitPeerConnection00, exception: " + e.message);
-      try {
-        connection = new PeerConnnection00(_stun_server, onICECandidate);
-        console.log("Created PeerConnnection with config \"" + _stun_server + "\".");
-      } catch(e) {
-        console.log("Failed to create PeerConnection, exception: " + e.message);
-      }
+      connection = new webkitRTCPeerConnection(pc_config);
+      connection.onicecandidate = onIceCandidate;
+      console.log("Created webkitRTCPeerConnnection with config \"" + JSON.stringify(pc_config) + "\".");
+    } catch (e) {
+      console.log("Create webkitRTCPeerConnnection failed.");
+      alert("The browser current support vidoe, please use chrome 23 stable version.")
     }
     return connection;
   }
@@ -180,13 +181,14 @@ function WebRTCClient(currentUser, socket) {
     }
   }
 
-  function onICECandidate(candidate, moreToFollow) {
-    if(candidate) {
-      sendMessage({
-        type: 'candidate',
-        label: candidate.label,
-        candidate: candidate.toSdp()
-      });
+  function onIceCandidate(event) {
+    if (event.candidate) {
+      sendMessage({type: 'candidate',
+                   label: event.candidate.sdpMLineIndex,
+                   id: event.candidate.sdpMid,
+                   candidate: event.candidate.candidate});
+    } else {
+      console.log("End of candidates.");
     }
   }
 
@@ -209,30 +211,16 @@ function WebRTCClient(currentUser, socket) {
   }
 
   function doCall() {
-    var offer = _peerConnection.createOffer({
-      audio: true,
-      video: true
-    });
-    _peerConnection.setLocalDescription(_peerConnection.SDP_OFFER, offer);
-    sendMessage({
-      type: 'offer',
-      sdp: offer.toSdp()
-    });
-    _peerConnection.startIce();
+    _peerConnection.createOffer(setLocalAndSendMessage, null, mediaConstraints);
   }
 
   function doAnswer() {
-    var offer = _peerConnection.remoteDescription;
-    var answer = _peerConnection.createAnswer(offer.toSdp(), {
-      audio: true,
-      video: true
-    });
-    _peerConnection.setLocalDescription(_peerConnection.SDP_ANSWER, answer);
-    sendMessage({
-      type: 'answer',
-      sdp: answer.toSdp()
-    });
-    _peerConnection.startIce();
+    _peerConnection.createAnswer(setLocalAndSendMessage, null, mediaConstraints);
+  }
+
+  function setLocalAndSendMessage(sessionDescription) {
+    _peerConnection.setLocalDescription(sessionDescription);
+    sendMessage(sessionDescription);
   }
 
   function onRemoteHangup(from) {
@@ -272,16 +260,19 @@ function WebRTCClient(currentUser, socket) {
 
   function processSignalingMessage(message) {
     var msg = JSON.parse(message);
-    if(msg.type === 'offer') {
-      _peerConnection.setRemoteDescription(_peerConnection.SDP_OFFER, new SessionDescription(msg.sdp));
+
+    if (msg.type === 'offer') {
+      // We only know JSEP version after createPeerConnection().
+      _peerConnection.setRemoteDescription(new RTCSessionDescription(msg));
       doAnswer();
-    } else if(msg.type === 'answer') {
-      _peerConnection.setRemoteDescription(_peerConnection.SDP_ANSWER, new SessionDescription(msg.sdp));
-    } else if(msg.type === 'candidate') {
-      var candidate = new IceCandidate(msg.label, msg.candidate);
-      _peerConnection.processIceMessage(candidate);
-    } else if(msg.type === 'bye') {
-      onRemoteHangup(msg.from);
+    } else if (msg.type === 'answer') {
+      _peerConnection.setRemoteDescription(new RTCSessionDescription(msg));
+    } else if (msg.type === 'candidate') {
+      var candidate = new RTCIceCandidate({sdpMLineIndex:msg.label,
+                                           candidate:msg.candidate});
+      _peerConnection.addIceCandidate(candidate);
+    } else if (msg.type === 'bye') {
+      onRemoteHangup();
     }
   }
 }

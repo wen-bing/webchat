@@ -3,6 +3,9 @@ var util = require('util');
 
 module.exports.startServer = function(httpServer) {
 	var socketIO = socket_io.listen(httpServer);
+	socketIO.set('transports', ['xhr-polling']);
+	socketIO.set('polling duration', 10);
+	
 	var allOnlineUsers = {};
 
 	socketIO.on('connection', function(socket) {
